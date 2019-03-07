@@ -2784,7 +2784,7 @@ public class CollectionsDemo {
 
 
 
-##### 字节流
+#### 字节流
 
 ​	用于以字节的形式读取和写入数据
 
@@ -3007,7 +3007,7 @@ public class Demo1 {
 
 
 
-##### 字符流
+#### 字符流
 
 - Reader字符输入流 
 - Writer字符输出流 
@@ -3724,6 +3724,729 @@ class myCompare implements Comparator{
 传统方法创建一个对象，需要使用 new 关键字，同时在内存中开辟一片区域，这个过程中需要去计算对象的大小等，会增加时间；如果需要创建大量相同的对象，则会大大的增加内存空间；
 
 使用克隆的方法，避免了计算对象大小的步骤，减少了时间
+
+```java
+package com.learning.demo.clone_study;
+
+public class CloneDemo {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Person p1 = new Person("xiaoli",27);
+		try {
+			Person p2 = (Person) p1.clone();
+			
+			System.out.println(p1);
+			System.out.println(p2); //两者的内存地址不相同
+			
+			System.out.println(p1.toCustomString());
+			System.out.println(p2.toCustomString());//两者的内容是相同的
+			
+			System.out.println(p1 == p2); //false
+			
+		} catch (CloneNotSupportedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+}
+
+
+/**
+ * 对象要具备克隆的功能
+ * 1. 实现 Cloneable 接口
+ * 2. 重写 Object 类中的 Clone() 方法
+ * @author zhouzhiliwen
+ *
+ */
+class Person implements Cloneable{
+	String name;
+	int age;
+	
+	public Person() {}
+
+	public Person(String name, int age) {
+		super();
+		this.name = name;
+		this.age = age;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public int getAge() {
+		return age;
+	}
+
+	public void setAge(int age) {
+		this.age = age;
+	}
+
+	
+	public String toCustomString() {
+		return "Person [name=" + name + ", age=" + age + "]";
+	}
+
+	//重写 clone() 方法
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		// TODO Auto-generated method stub
+		return super.clone();
+	}
+	
+	
+}
+
+```
+
+---
+
+
+
+### 数据流
+
+
+
+
+
+
+
+---
+
+
+
+### Java 对象序列化和反序列化
+
+(https://www.hollischuang.com/archives/1140)
+
+#### 什么是对象的序列化
+
+- Java允许我们在内存中创建可以复用的Java对象，但是理论上，只有 JVM 运行的时候这些对象才会存在，它们的生命周期不会大于JVM 的生命周期。为了达到持久化（在 JVM 停止之后这些指定的对象仍然存在，方便我们在未来重新读取被保存的对象）的效果，我们就需要用到对象的序列化。
+- 在对对象进行序列化的时候，将会把对象的状态保存为一组字节，在未来再将这组字节组装成对象。**对象序列化保存的是对象的”状态”，即它的成员变量。由此可知，*<u>对象序列化不会关注类中的静态变量</u>*。**
+- 除了在持久化对象的时候需要用到对象的持久化，在使用 RMI（远程方法调用）和网络中传输对象的时候，我们都需要用到对象的序列化。
+
+
+
+#### 怎么序列化
+
+```java
+package com.learning.demo.Serializable_study;
+
+import java.io.*;
+
+public class SerializableDemo {
+
+    public static void main(String[] args){
+
+        Student stu = new Student();
+        stu.setId(001);
+        stu.setName("小明");
+        stu.setGender("man");
+
+        System.out.println(stu);  // => Student{name='小明', id=1, gender='man'}
+
+
+        //将对象写入到磁盘(序列化)
+        ObjectOutputStream oos = null;
+
+        try {
+
+            oos = new ObjectOutputStream(new FileOutputStream("/Users/zhouzhiliwen/Documents/java-workspace/Java/Demo/src/com/learning/demo/Serializable_study/output/tempFile"));
+            oos.writeObject(stu);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                oos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        //从文件中读取对象(反序列化)
+        File file = new File("/Users/zhouzhiliwen/Documents/java-workspace/Java/Demo/src/com/learning/demo/Serializable_study/output/tempFile");
+        ObjectInputStream ois = null;
+
+        try {
+            ois = new ObjectInputStream(new FileInputStream(file));
+
+            Student stud1 = (Student) ois.readObject();
+            System.out.println(stud1); // => Student{name='小明', id=1, gender='null'}
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                ois.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+}
+
+```
+
+
+
+#### 序列化和反序列化的相关知识
+
+1. 只要一个类实现了 Serializable 接口，就可以被序列化（Serializable 是一个空接口，只起标志的作用）
+2. 通过 `ObjectInputStream` 和 `ObjectOutputStream`对对象进行序列化和反序列化
+3. 虚拟机是否允许反序列化，不仅取决于类路径和功能代码是否一致，一个非常重要的一点是两个类的序列化 ID 是否一致（就是 `private static final long serialVersionUID`）
+4. 序列化并不保存静态变量。
+5. 要想将父类对象也序列化，就需要让父类也实现`Serializable` 接口。
+6. `transient` 关键字的作用是控制变量的序列化，在变量声明前加上该关键字，可以阻止该变量被序列化到文件中，在被反序列化后，`transient` 变量的值被设为初始值，如 int 型的是 0，对象型的是 null。
+7. 服务器端给客户端发送序列化对象数据，对象中有一些数据是敏感的，比如密码字符串等，希望对该密码字段在序列化时，进行加密，而客户端如果拥有解密的密钥，只有在客户端进行反序列化时，才可以对密码进行读取，这样可以一定程度保证序列化对象的数据安全。
+
+
+
+#### Arraylist的序列化
+
+- ArrayList 是实现了 Serializable 接口的，所以他可以进行序列化和反序列化
+
+- 其底层Object数组`elementData`是用 `transient`修饰的，但是仍然能够被序列化
+
+  - 是因为 ArrayList 中定义了两个方法：writeObject() 和 readObject()。
+
+    > 在序列化过程中，如果被序列化的类中定义了writeObject 和 readObject 方法，虚拟机会试图调用对象类里的 writeObject 和 readObject 方法，进行用户自定义的序列化和反序列化。
+    >
+    > 如果没有这样的方法，则默认调用是 ObjectOutputStream 的 defaultWriteObject 方法以及 ObjectInputStream 的 defaultReadObject 方法。
+    >
+    > 用户自定义的 writeObject 和 readObject 方法可以允许用户控制序列化的过程，比如可以在序列化的过程中动态改变序列化的数值。
+
+  ```java
+  private void readObject(java.io.ObjectInputStream s)
+          throws java.io.IOException, ClassNotFoundException {
+          elementData = EMPTY_ELEMENTDATA;
+  
+          // Read in size, and any hidden stuff
+          s.defaultReadObject();
+  
+          // Read in capacity
+          s.readInt(); // ignored
+  
+          if (size > 0) {
+              // be like clone(), allocate array based upon size not capacity
+              ensureCapacityInternal(size);
+  
+              Object[] a = elementData;
+              // Read in all elements in the proper order.
+              for (int i=0; i<size; i++) {
+                  a[i] = s.readObject();
+              }
+          }
+      }
+  
+  private void writeObject(java.io.ObjectOutputStream s)
+          throws java.io.IOException{
+          // Write out element count, and any hidden stuff
+          int expectedModCount = modCount;
+          s.defaultWriteObject();
+  
+          // Write out size as capacity for behavioural compatibility with clone()
+          s.writeInt(size);
+  
+          // Write out all elements in the proper order.
+          for (int i=0; i<size; i++) {
+              s.writeObject(elementData[i]);
+          }
+  
+          if (modCount != expectedModCount) {
+              throw new ConcurrentModificationException();
+          }
+      }
+  ```
+
+
+- **为什么要使用这种方式进行序列化？**
+
+  - **why transient**
+
+    ArrayList实际上是动态数组，每次在放满以后自动增长设定的长度值，如果数组自动增长长度设为100，而实际只放了一个元素，那就会序列化99个null元素。为了保证在序列化的时候不会将这么多null同时进行序列化，ArrayList把元素数组设置为transient。
+
+  - **why writeObject and readObject**
+
+    前面说过，为了防止一个包含大量空对象的数组被序列化，为了优化存储，所以，ArrayList使用`transient`来声明`elementData`。 但是，作为一个集合，在序列化过程中还必须保证其中的元素可以被持久化下来，所以，通过重写`writeObject` 和 `readObject`方法的方式把其中的元素保留下来。
+
+    `writeObject`方法把`elementData`数组中的元素遍历的保存到输出流（ObjectOutputStream）中。
+
+    `readObject`方法从输入流（ObjectInputStream）中读出对象并保存赋值到`elementData`数组中。
+
+    - 如何自定义序列化和反序列化的策略？
+      - 可以通过在类中添加 writeObject() 和 readObject() 方法来实现。
+    - 如果一个类中含有writeObject() 和 readObject() 方法，那么这两个方法是如何被调用的呢？
+      - 在使用ObjectOutputStream的writeObject方法和ObjectInputStream的readObject方法时，会通过反射的方式调用。
+
+- 总结
+
+  1. 如果一个类想被序列化，需要实现Serializable接口。否则将抛出`NotSerializableException`异常，这是因为，在序列化操作过程中会对类型进行检查，要求被序列化的类必须属于Enum、Array和Serializable类型其中的任何一种。
+
+  2. 在变量声明前加上`transient`关键字，可以阻止该变量被序列化到文件中。
+
+  3. 在类中增加`writeObject` 和 `readObject` 方法可以实现自定义序列化策略
+
+
+
+---
+
+### 网络编程 Socket
+
+- 客户端与服务器之间通过 Socket 建立通信
+
+- 客户端必须知道服务端应用程序的IP 地址（或网络名称）以及端口号
+
+- TCP端口号是一个16位的值，用来指定特定的应用程序
+
+- 0~1023的端口号是保留给HTTP、FTP、SMTP等已知的服务
+
+- 客户端通过建立 Socket 来连接服务器
+
+  ```java
+  Socket socket = new Socket(String IPAddress, int port);
+  ```
+
+- 一旦建立了连接之后，客户端可以从 Socket取得底层串流
+
+  ```java
+  scoket.getInputStream();
+  ```
+
+- 建立BufferedReader连接InputStreamReader与来自Socket的输入串流以读取服务器的文本信息
+
+- InputStreamReader可以转换字节为字符，主要是用来连接BufferedReader与底层的 Socket 输入串流
+
+- 建立直接连接 Socket 输入串流的 PrinterWriter请求 print()或println()方法来送出 String 给服务端
+
+- 服务器可以使用ServerSocket来等待用户对特定端口的请求
+
+- 当ServerSocket接到请求时，他会做一个 Socket 连接来接受客户端的请求
+
+
+
+#### 简单的 demo
+
+```java
+// 服务端
+package com.learning.demo.Socket_study;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+public class SingleChatServer {
+
+    static String[] advices = { "run", "walk", "swim", "sleep",
+                                "run", "walk", "swim", "sleep",
+                                "run", "walk", "swim", "sleep",
+                                "run", "walk", "swim", "sleep"
+                                };
+
+    public void go(){
+
+        try {
+
+            ServerSocket socket = new ServerSocket(4242);
+            while(true){
+                Socket socket1 = socket.accept();
+
+                PrintWriter writer = new PrintWriter(socket1.getOutputStream());
+                String advice = getAdvice();
+                writer.print(advice);
+                writer.close();
+                System.out.println(advice);
+
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static String getAdvice(){
+        int random = (int) (Math.random() * 100 / advices.length);
+        return advices[random];
+    }
+
+    public static void main(String[] args){
+        SingleChatServer server = new SingleChatServer();
+        server.go();
+    }
+}
+
+
+```
+
+
+
+```java
+// 客户端
+package com.learning.demo.Socket_study;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.Socket;
+
+public class SingleChatClient {
+
+    public void go(){
+
+        try {
+
+            Socket socket = new Socket("127.0.0.1",4242);
+
+            InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+            String advice = bufferedReader.readLine();
+
+            System.out.println("Today you should " + advice);
+
+            bufferedReader.close();
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args){
+        SingleChatClient client = new SingleChatClient();
+        client.go();
+    }
+}
+
+
+```
+
+
+
+https://www.jianshu.com/p/cde27461c226
+
+#### Socket 通信的基本原理
+
+socket 通信是基于TCP/IP 网络层上的一种传送方式，我们通常把TCP和UDP称为传输层。
+
+![网络分层模型示意图](/Users/zhouzhiliwen/Documents/电子书/学习笔记/notebook/img/网络分层模型示意图.png)
+
+
+
+
+
+如上图，在七个层级关系中，我们将的socket属于传输层，其中UDP是一种面向无连接的传输层协议。UDP不关心对端是否真正收到了传送过去的数据。如果需要检查对端是否收到分组数据包，或者对端是否连接到网络，则需要在应用程序中实现。UDP常用在分组数据较少或多播、广播通信以及视频通信等多媒体领域。在这里我们不进行详细讨论，这里主要讲解的是基于TCP/IP协议下的socket通信。
+
+socket是基于应用服务与TCP/IP通信之间的一个抽象，他将TCP/IP协议里面复杂的通信逻辑进行分装，对用户来说，只要通过一组简单的API就可以实现网络的连接。借用网络上一组socket通信图给大家进行详细讲解：
+
+![Socket网络通信示意图](/Users/zhouzhiliwen/Documents/电子书/学习笔记/notebook/img/Socket网络通信示意图.png)
+
+
+
+首先，服务端初始化ServerSocket，然后对指定的端口进行绑定，接着对端口及进行监听，通过调用accept方法阻塞，此时，如果客户端有一个socket连接到服务端，那么服务端通过监听和accept方法可以与客户端进行连接。
+
+
+
+- 通常大家会用以下方法进行进行结束：
+
+  socket.close() 或者调用socket.shutdownOutput()方法。调用这俩个方法，都会结束客户端socket。但是有本质的区别。
+
+  socket.close() 将socket关闭连接，那边如果有服务端给客户端反馈信息，此时客户端是收不到的。
+
+  而socket.shutdownOutput()是将输出流关闭，此时，如果服务端有信息返回，则客户端是可以正常接受的。
+
+
+
+#### 能够进行多次通信：
+
+```java
+//服务端
+package com.learning.demo.Socket_study;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+public class MultiTransformServer {
+
+    public static void main(String[] args){
+
+        try {
+
+            ServerSocket serverSocket = new ServerSocket(9999); //初始化服务端socket并且绑定9999端口
+            Socket socket = serverSocket.accept(); //等待客户端的连接
+
+            //获取输入流,并且指定统一的编码格式
+            BufferedReader bufferedReader =new BufferedReader(new InputStreamReader(socket.getInputStream(),"UTF-8"));
+
+            //读取一行数据
+            String str;
+
+            //通过while循环不断读取信息
+            while ((str = bufferedReader.readLine()) != null) {
+
+                //输出打印
+                System.out.println(str);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+}
+
+//客户端
+package com.learning.demo.Socket_study;
+
+import java.io.*;
+import java.net.Socket;
+
+public class MultiTransformClient {
+
+    public static void main(String[] args){
+
+        //初始化一个socket           
+        Socket socket = null;
+        try {
+            socket = new Socket("127.0.0.1",9999);
+
+            //通过socket获取字符流           
+            BufferedWriter bufferedWriter =new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+
+            //通过标准输入流获取字符流           
+            BufferedReader bufferedReader =new BufferedReader(new InputStreamReader(System.in,"UTF-8"));
+            while (true){
+                String str = bufferedReader.readLine();
+                bufferedWriter.write(str);
+                bufferedWriter.write("\n"); //在每一行的末尾添加一个回车作为标识符
+                bufferedWriter.flush();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+
+    }
+}
+
+```
+
+
+
+#### 使用多线程：
+
+```java
+//服务端
+package com.learning.demo.Socket_study;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+public class MultiThreadServer {
+
+    public static void main(String[] args){
+
+        try {
+
+            ServerSocket serverSocket = new ServerSocket(9999); //初始化服务端 Socket 并绑定9999端口
+
+
+
+            while(true){
+
+                //等待客户端连接
+                Socket socket = serverSocket.accept();
+
+                //每当有一个客户端连接进来之后，就启动一个单独的线程进行处理
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        BufferedReader reader = null;
+                        //获取输入流，并且指定统一的编码格式
+                        try {
+                            reader = new BufferedReader(new InputStreamReader(socket.getInputStream(),"UTF-8"));
+
+                            //读取一行数据
+                            String str;
+
+                            //通过 while 循环不断读取信息
+                            while((str = reader.readLine()) != null){
+                                //输出打印
+                                System.out.println("客户端说： " + str);
+                            }
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }).start();
+
+            }
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+//客户端
+package com.learning.demo.Socket_study;
+
+import java.io.*;
+import java.net.Socket;
+
+public class MultiThreadClient {
+
+    public static void main(String[] args){
+
+        try {
+
+            //初始化一个 socket
+            Socket socket = new Socket("127.0.0.1", 9999);
+
+            //通过 socket 获取字符流
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+
+            //通过标准输入流获取字符流
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in, "UTF-8"));
+
+            while(true){
+
+                String str = reader.readLine();
+                writer.write(str);
+                writer.write("\n");
+                writer.flush();
+            }
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+}
+```
+
+
+
+#### 使用线程池
+
+```java
+//服务端
+package com.learning.demo.Socket_study;
+
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+public class ThreadPoolServer {
+
+    public static void main(String[] args){
+
+        try {
+
+            ServerSocket serverSocket = new ServerSocket(9999);
+
+            //创建一个线程池
+            ExecutorService executorService = Executors.newFixedThreadPool(100);
+
+            while(true){
+                Socket socket = serverSocket.accept();
+
+                //lambda 表达式
+                Runnable runnable = () -> {
+                    try {
+
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
+                        String str;
+
+                        while((str = reader.readLine()) != null){
+                            System.out.println("客户端说： " + str);
+                        }
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                };
+
+                executorService.submit(runnable);
+            }
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+//客户端和之前的一样
+```
+
+
+
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
