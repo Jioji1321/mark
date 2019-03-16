@@ -1254,5 +1254,9 @@ for(int i=0; i < 100; i++)
 </c:forEach>
 ```
 
- 	6. \<c:redirect>
+
+
+
+
+
 
