@@ -1,6 +1,8 @@
 # SpringBoot 实战
 
-## 控制反转
+## Spring
+
+### 控制反转
 
 控制反转（IOC）和和依赖注入 (DI) 在 Spring 环境下是等同的概念，控制反转是通过依赖注入实现的。
 
@@ -115,7 +117,7 @@ Java 配置是通过@Configuration 和@Bean实现
 
 
 
-## AOP
+### AOP
 
 AOP：面向切面编程
 
@@ -261,7 +263,7 @@ public class Main {
 
 
 
-## Bean的 Scope(作用域)
+### Bean的 Scope(作用域)
 
 @Scope 有以下几种
 
@@ -346,7 +348,7 @@ public class DemoApplication {
 
 
 
-### Spring EL 和资源调用
+#### Spring EL 和资源调用
 
 Spring 主要在注解@Value 的参数中使用表达式
 
@@ -430,7 +432,7 @@ public class ELConfig {
 
 
 
-### Bean 的初始化和销毁
+#### Bean 的初始化和销毁
 
 Spring 对 Bean 的生命周期配置：
 
@@ -439,7 +441,7 @@ Spring 对 Bean 的生命周期配置：
 
 
 
-### 事件(Application Event)
+#### 事件(Application Event)
 
 Spring 的事件为 Bean 和 Bean 之间的消息通信提供了支持。当一个 Bean 处理完一个任务之后，希望另外一个 Bean知道并能做相应的处理，这是就需要让另外一个 Bean 监听当前 Bean 所发送的事件。
 
@@ -554,9 +556,9 @@ public class DemoApplication {
 
 
 
-## Spring高级话题
+### Spring高级话题
 
-### Spring Aware
+#### Spring Aware
 
 使用 Spring 本身容器的功能资源时，Bean 需要意识到容器的存在才能够调用 Spring 提供的资源。
 
@@ -574,7 +576,7 @@ demo6-Aware
 
 
 
-### 多线程
+#### 多线程
 
 Spring 可以通过任务执行器(TaskExecutor)来实现多线程和并发操作。使用 ThreadPoolTaskExecutor 可实现一个基于线程池的 TaskExecutor。由于开发过程中一般都是异步的，所以要在配置类中通过@EnableAsync 开启对异步任务的支持，并通过在实际执行的 Bean 方法中使用@Async 注解来声明其是一个异步任务。
 
@@ -584,7 +586,7 @@ demo7-TaskExecutor
 
 
 
-### 计划任务
+#### 计划任务
 
 在配置类中注解@EnableScheduling 来开启对计划任务的支持，然后在要执行计划任务的方法上注解@Scheduled，声明这是一个计划任务。
 
@@ -598,5 +600,209 @@ demo8-Schedule
 
 
 
-### 条件注解
+#### 条件注解
+
+@Conditional 根据满足某一个特定条件创建一个特定的 Bean
+
+实现 Conditin 接口，并重写 matches()方法来后早判断条件
+
+
+
+demo9-Conditional
+
+
+
+#### 组合注解和元注解
+
+将多个注解组合成一个注解进行使用
+
+
+
+demo10-multiAnnotation
+
+
+
+
+
+### Enable*注解的工作原理
+
+@EnableAspectJAutoProxy：开启对 AspectJ 自动代理的支持
+
+@EnableAsync：开启异步方法的支持
+
+@EnableScheduling：开启计划任务的支持
+
+@EnableWebMvc：开启 Web MVC 的支持
+
+@EnableConfigurationProperties：开启对ConfigurationProperties 注解配置 Bean 的支持
+
+@EnableJpaRepositories：开启对 Spring JPA Respository 的支持
+
+@EnableTransactionManagement：开启竹节式事务的支持
+
+@EnableCaching：开启注解式的缓存支持
+
+
+
+@Import 注解：导入配置类
+
+1. 直接导入配置类
+2. 依据条件选择配置类
+3. 动态注册 Bean
+
+
+
+### 测试
+
+SpringJunit4ClassRunner 类，通过@ContextConfiguration 来配置 Application Context，通过@ActiveProfiles 确定活动的 profile。
+
+
+
+demo11-Test
+
+
+
+
+
+## Spring MVC
+
+MVC 只存在三层架构的展现层：M 是数据模型，是包含数据的对象。有一个专门的类 Model，用来和 V 之间的数据交互、传值；V 指的是视图页面；C 是控制器
+
+
+
+三层架构是整个应用的架构，有 Spring 负责管理的。Service(应用层)，DAO 层(数据访问层)
+
+
+
+Spring MVC 的 ViewResolver，是 Spring MVC视图渲染的核心机制：Spring MVC 里有一个接口叫做 ViewResolver(自定义的 ViewResolver 都实现该接口)，实现这个接口要重写方法 resolveViewName()，这个方法的返回值是接口 View，而 View 的指责是使用 model、request、response 对象，并将渲染的视图(html、json、xml、pdf 等)返回给浏览器
+
+
+
+### 常用注解
+
+@Controller：表名这个类是 Spring MVC的 Controller。
+
+@RequestMapping：用来映射 Web 请求
+
+@ResponseBody：支持将返回值放在 response 体内，而不是返回一个页面。可以用于基于 Ajax 的程序，注解返回数据而不是页面。可以放在返回值前或者方法上。
+
+@RequestBody：支持将返回值放在 response 体内，而不是在直接链接在地址后面。此注解放置在参数前。
+
+@PathVariable：用来接收路径参数，如/news/001，可接受001作为参数，次注解放在参数前。
+
+@RestController：组合注解，组合了@Controller 和 ResponseBody，当只开发一个和页面交互数据的控制就需要使用这个注解。
+
+
+
+demo13-SpringMVC-Annotation
+
+
+
+### Spring MVC 基本配置
+
+Spring MVC 的定制配置需要我们的配置类继承一个 WebMvcConfigurerAdapter类，并在这个类中使用@EnableWebMvc 注解来开启对 Spring MVC 的配置支持。
+
+#### 静态资源映射
+
+程序的静态文件(js，css，图片)等需要直接访问，这时我们可以在配置里重写addResourceHandlers方法实现。
+
+```java
+package com.example.demo;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import org.springframework.web.servlet.view.JstlView;
+
+@Configuration
+@EnableWebMvc
+@ComponentScan("com.example.demo")
+public class SpringMVCConfig extends WebMvcConfigurerAdapter{
+
+    @Bean
+    public InternalResourceViewResolver viewResolver(){
+        InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
+
+        viewResolver.setPrefix("/WEB-INF/classes/views");
+        viewResolver.setSuffix(".jsp");
+        viewResolver.setViewClass(JstlView.class);
+        return viewResolver;
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/assets/**").addResourceLocations("classpath:/assets/"); //addResourceLocations指的是文件放置的目录，addResourceHandler指的是对外暴露的访问路径
+    }
+}
+```
+
+
+
+#### 拦截器配置
+
+拦截器(Interceptor)实现对每一个请求处理前后进行相关的业务处理，类似于 Servlet 的 Filter。
+
+可让普通的 Bean 实现 HandlerInterceptor 接口或继承 HandlerIntercptorAdapter 类来实现自定义拦截器。
+
+通过重写 WebMvcConfigurerAdapter 的 addIntercptors方法来注册自定义的拦截器。
+
+
+
+#### @ControllerAdvice
+
+通过这个注解，可以将对于控制器的全局设置放置在同一个位置，注解了@Controller 的类的方法可使用@ExceptionHandler\@InitBinder\@ModelAttribute注解到方法上，这对所有注解了@RequestMapping 的控制器内的方法有效。
+
+@ExceptionHandler：用于全局处理控制器里的异常
+
+@InitBinder：用来设置 WebDataBinder，WebDataBinder用来自动绑定前台请求参数到 Model 中
+
+@ModelAttribute：本来的作用是绑定键值对到 Model 中。此处是让全局的@RequestMapping 都能获得在此处设置的键值对
+
+
+
+#### 其他配置
+
+1. 快捷的 ViewController
+
+   在配置类中重写 addViewControllers 来简化没有业务处理只是简单的页面转向的配置：
+
+   ```java
+   @Override
+   public void addViewCOntroller(ViewControllerRegistry registry){
+     registry.addViewController("/index").setViewName("/index");
+   }
+   ```
+
+​	
+
+2. 路径匹配参数配置
+
+   在 Spring MVC 中，路径参数如果带"."的话，"."后面的值将会被忽略。
+
+   ```java
+   @Override
+       public void configurePathMatch(PathMatchConfigurer configurer) { //重写configurePathMatch方法可以不忽略"."后面的内容
+           configurer.setUseSuffixPatternMatch(false);
+       }
+   ```
+
+   
+
+### Spring MVC 的高级配置
+
+#### 文件上传配置
+
+Spring MVC 通过一个配置 MultipartResolver 来上传文件。
+
+在控制器中，使用 MultipartFile file 来接收文件，通过 MultipartFile[] files 接收多个文件上传。
+
+
+
+#### 自定义HttpMessageConverter
+
+HttpMessageConverter是用来处理 request 和 response 里的数据的。
 
