@@ -806,3 +806,450 @@ Spring MVC 通过一个配置 MultipartResolver 来上传文件。
 
 HttpMessageConverter是用来处理 request 和 response 里的数据的。
 
+
+
+### SpringMVC 测试
+
+
+
+
+
+## 实战 Spring Boot
+
+```java
+package com.example.demo;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@SpringBootApplication
+@RestController
+public class SpringBootDemoApplication {
+
+	@RequestMapping("/")
+	public String index(){
+		return "Hello World";
+	}
+
+	public static void main(String[] args) {
+		SpringApplication.run(SpringBootDemoApplication.class, args);
+	}
+}
+```
+
+
+
+### Spring Boot 核心
+
+#### 入口类和 @SpringBootApplication
+
+- 可以通过@SpringBootApplication 注解的 exclude 参数来关闭特定的自动配置
+
+  `@SpringBootApplication(exclude={DataSourceAutoConfiguration.class})`
+
+
+
+- 关闭 Banner
+
+  ```java
+  public static void main(String[] args) {
+  		SpringApplication app = new SpringApplication(SpringBootDemoApplication.class);
+  app.setShowBanner(false);
+  app.run(args);
+  	}
+  ```
+
+
+
+- 使用 xml 配置
+
+  `@ImportResource({"classpath:some-context.xml","classpath:another-context.xml"})`
+
+
+
+#### 常规属性配置
+
+```java
+package com.example.demo;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@SpringBootApplication
+@RestController
+public class SpringBootDemoApplication {
+
+	@Value("${book.author}")
+	private String author;
+
+	@Value("${book.name}")
+	private String name;
+
+	@RequestMapping("/")
+	public String index(){
+		return "Hello World, book name is " + name + ", author is " + author + ". ";
+	}
+
+	public static void main(String[] args) {
+		SpringApplication.run(SpringBootDemoApplication.class, args);
+	}
+}
+```
+
+
+
+#### 类型安全的配置
+
+```properties
+//类型安全的配置
+author.name=wyf
+author.age=32
+```
+
+
+
+```java
+package com.example.demo.domain;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+
+@Component
+@ConfigurationProperties(prefix = "author")
+public class AuthorSetting {
+
+    private String name;
+
+    private Long age;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Long getAge() {
+        return age;
+    }
+
+    public void setAge(Long age) {
+        this.age = age;
+    }
+
+    @Override
+    public String toString() {
+        return "name='" + name + '\'' +
+                ", age=" + age;
+    }
+}
+```
+
+
+
+```java
+package com.example.demo;
+
+import com.example.demo.domain.AuthorSetting;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@SpringBootApplication
+@RestController
+public class SpringBootDemoApplication {
+
+	@Autowired
+	private AuthorSetting authorSetting;
+
+	@Value("${book.author}")
+	private String author;
+
+	@Value("${book.name}")
+	private String name;
+
+	@RequestMapping("/")
+	public String index(){
+		return "Hello World, book name is " + name + ", author is " + author + ". author information: " + authorSetting;
+	}
+
+	public static void main(String[] args) {
+		SpringApplication.run(SpringBootDemoApplication.class, args);
+	}
+}
+```
+
+
+
+#### Profile 配置
+
+全局 Profile 配置使用 application-{profile}.properties
+
+通过在 application.properties中设置spring.profiles.active=xxx(profile)来指定活动的 profile
+
+`spring.profiles.active=xxx`
+
+
+
+#### 核心注解
+
+@ConditionalOnBean：当容器里有指定的Bean的条件下
+
+@ConditionalOnClass：当类路径下有指定的类的条件下
+
+@ConditionalOnExpression：基于 SpEL 表达式作为判断条件
+
+。。。。。。
+
+
+
+```properties
+#http的编码格式
+#默认编码格式
+spring.http.encoding.charset=UTF-8
+#设置强制编码
+spring.http.encoding.force=false
+```
+
+
+
+```java
+package com.example.demo.config;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.http.HttpEncodingProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.filter.CharacterEncodingFilter;
+
+@Configuration
+@EnableConfigurationProperties(HttpEncodingProperties.class)
+@ConditionalOnClass(CharacterEncodingFilter.class)
+@ConditionalOnProperty(prefix = "spring.http.encoding",value = "enabled",matchIfMissing = true) //当设置spring.http.encoding=enabled的情况下，如果没有设置则默认为true，即条件符合
+public class HttpEncodingAutoConfiguration {
+
+    @Autowired
+    private HttpEncodingProperties httpEncodingProperties;
+
+    @Bean
+    @ConditionalOnMissingBean(CharacterEncodingFilter.class)
+    public CharacterEncodingFilter characterEncodingFilter(){
+        CharacterEncodingFilter filter = new CharacterEncodingFilter();
+        filter.setEncoding(this.httpEncodingProperties.getCharset().name());
+        filter.setForceEncoding(this.httpEncodingProperties.isForce());
+        return filter;
+    }
+}
+```
+
+
+
+
+
+### Thymeleaf
+
+命名空间：`<html xmlns:th="http://www.thymeleaf.org">`
+
+需要进行动态处理的元素将使用`"th:"`的前缀
+
+使用@{}引用Web静态资源
+
+`<script th:src="@{bootstrap/js/bootstrap.min.js}"></script>`
+
+通过${}引用 model 属性
+
+`<span th:text="${singlePerson.name}"></span>`
+
+
+
+#### model中的数据迭代
+
+使用 `th:each` 循环迭代
+
+```html
+<div class="panel-body>
+	<ul class="list-group">
+		<li class="list-group-item" th:each="person:${people}">                       
+			<span th:text="${person.name}"></span>
+      <span th:text="${person.age}"></span>
+   	</li>
+  </ul>
+</div>
+```
+
+
+
+#### 数据判断
+
+${not #lists.isEmpty(people)}表达式判断 people 是否为空。
+
+支持>,<,>=,<=,==,!=作为比较条件，同时也支持 SpringEL 表达式语言
+
+
+
+#### 在 JavaScript 中访问 model
+
+```javascript
+<script th:inline="javascript">
+	var single = [[${singlePerson}]];
+	console.log(single.name+"/"+single.age);
+</script>
+```
+
+通过`th:inline="javascript"`添加到 script 标签，则代码可以访问 model 中 的属性
+
+通过`[[${...}]]`格式获得实际的值
+
+
+
+html 中访问 model 中的属性
+
+```html
+<button class="btn" th:onclick="'getName(\'' + ${person.name} + '\');'">xxx</button>
+```
+
+
+
+#### 在 Spring MVC 中集成 Thymeleaf
+
+```java
+package com.example.demo.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.thymeleaf.spring4.SpringTemplateEngine;
+import org.thymeleaf.spring4.view.ThymeleafViewResolver;
+import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
+import org.thymeleaf.templateresolver.TemplateResolver;
+
+@Configuration
+public class ThymeleafConfig {
+
+    @Bean
+    public TemplateResolver templateResolver(){
+        TemplateResolver templateResolver = new ServletContextTemplateResolver();
+        templateResolver.setPrefix("/WEB_INF/templates");
+        templateResolver.setSuffix(".html");
+        templateResolver.setTemplateMode("HTML5");
+        return templateResolver;
+    }
+
+    @Bean
+    public SpringTemplateEngine templateEngine(){
+        SpringTemplateEngine templateEngine = new SpringTemplateEngine();
+        templateEngine.setTemplateResolver(templateResolver());
+        return templateEngine;
+    }
+
+    @Bean
+    public ThymeleafViewResolver thymeleafViewResolver(){
+        ThymeleafViewResolver viewResolver = new ThymeleafViewResolver();
+        viewResolver.setTemplateEngine(templateEngine());
+//        viewResolver.setViewClass(ThymeleafView.class);
+        return viewResolver;
+    }
+}
+```
+
+
+
+
+
+#### 注册 Servlet、Filter、Listener
+
+通过 RegistrationBean 注册
+
+```java
+@Bean
+public ServletRegistrationBean servletRegistrationBean(){
+  return new ServletRegistrationBean(new XxServlet(), "/xx/*");
+}
+
+@Bean
+public FilterRegistrationBean filterRegistrationBean(){
+  FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
+  filterRegistrationBean.setFilter(new YyFilter());
+  filterRegistrationBean.setOrder(2);
+  return filterRegistrationBean;
+}
+
+@Bean
+public ServletListenerRegistrationBean<ZzListener> zZListenerServletRegistrationBean(){
+  return new ServletListenerRegistrationBean<ZzListener>(new ZzListener());
+}
+```
+
+
+
+### Servlet 容器配置
+
+#### 常用配置
+
+配置 Servlet 容器
+
+```properties
+server.port= #端口号
+server.session-timeout= #用户会话 session 过期时间，单位为秒
+server.context-path= #配置访问路径，默认为/
+```
+
+配置 Tomcat
+
+```properties
+server.tomcat.uri-encoding= #配置 Tomcat 编码，默认为 UTF-8
+server.tomcat.compression= #Tomcat是否开启压缩，默认为 off
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
