@@ -470,10 +470,311 @@ v-html：将文本解析为 html 格式
 
 
 
+## v-for 指令和key 属性
+
+1. 迭代数组
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Document</title>
+        <script src="lib/vue.js"></script>
+    </head>
+    <body>
+        <div id="app">
+            <!-- 使用 v-for 指令遍历普通数组 -->
+            <p v-for="item in list">{{ item }}</p>
+            <!-- 添加索引 -->
+            <p v-for="(item, i) in list">索引值{{ i }} --- {{ item }}</p>
+
+        </div>
+        <script>
+            var vm = new Vue({
+                el: '#app',
+                data: {
+                    list: [1,2,3,4,5,6]
+                },
+                methods: {
+                },
+            })
+        </script>
+    </body>
+</html>
+```
+
+
+
+2. 迭代对象数组
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="lib/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <p v-for="user in list">用户 id 为{{ user.id }} --- 用户名为{{ user.name }}</p>
+        <!-- 添加索引 -->
+        <p v-for="(user, i) in list">用户 id 为{{ user.id }} --- 用户名为{{ user.name }} --- 索引值为{{ i  }}</p>
+    </div>
+    <script>
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                list: [
+                    {
+                        id: 1,
+                        name: "zs1"
+                    },
+                    {
+                        id: 2,
+                        name: "zs2"
+                    },
+                    {
+                        id: 3,
+                        name: "zs3"
+                    },
+                    {
+                        id: 4,
+                        name: "zs4"
+                    },
+                ]
+            },
+            methods: {
+            },
+        })
+    </script>
+</body>
+
+</html>
+```
+
+
+
+3. 迭代对象中的属性
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="lib/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <!-- 在遍历对象身上的键值对时，除了有 val 和 key，在第三个位置还有索引值 -->
+        <p v-for="(val, key) in user">键是： {{ key }} --- 值是： {{ val }}</p>
+
+        <p v-for="(val, key, i) in user">键是： {{ key }} --- 值是： {{ val }} --- 索引为： {{ i }}</p>
+    </div>
+    <script>
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                user: {
+                    id: 1,
+                    name: '李大雯',
+                    age: '18',
+                    gender: '女'
+                }
+            },
+            methods: {
+            },
+        })
+    </script>
+</body>
+
+</html>
+```
+
+
+
+4. 迭代数字
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="lib/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <!-- 如果 in 后面接的是普通数字，则 count 的值从 1 开始 -->
+        <p v-for="count in 10">{{ count }}</p>
+    </div>
+    <script>
+        var vm = new Vue({
+            el: '#app',
+            data: {
+            },
+            methods: {
+            },
+        })
+    </script>
+</body>
+
+</html>
+```
+
+
+
+
+
 # 在 Vue 中使用样式
 
 ## 使用 class 样式
 
+```html
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Document</title>
+        
+
+        <script src="lib/vue.js"></script>
+
+        <style>
+        .red{
+            color: red;
+        }
+        
+        .thin{
+            font-weight: 200;
+        }
+
+        .italic{
+            font-style: italic;
+        }
+
+        .active{
+            letter-spacing: 5em;
+        }
+
+        </style>
+    </head>
+    
+
+    <body>
+        <div id="app">
+            <!-- 不使用 vue 的形式 -->
+            <h1 class="red thin">标题1</h1>
+
+            <!-- 第一种方式： 直接传递一个数组，class 需要使用 v-bind 做数据绑定 -->
+            <h1 :class="['thin', 'red']">标题1</h1>
+
+            <!-- 第二种方式： 使用三元表达式 -->
+            <h1 :class="['thin', flag?'red':'']">标题1</h1>
+
+            <!-- 第三种方式： 在数组中使用对象代替三元表达式，提高可读性 -->
+            <h1 :class="['thin', {'red': flag}]">标题1</h1>
+
+            <!-- 第四种方式： 直接使用对象 -->
+            <h1 :class="[{'thin': false}, {'red': flag}]">标题1</h1>
+
+        </div>
+        
+
+        <script>
+            var vm = new Vue({
+                el: '#app',
+                data: {
+                    flag: true,
+
+                },
+                methods: {
+                
+
+                },
+            })
+        </script>
+    </body>
+</html>
+```
+
 
 
 ## 使用内联样式
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Document</title>
+        
+
+        <script src="lib/vue.js"></script>
+    </head>
+    
+
+    <body>
+        <div id="app">
+            <!-- 不使用 vue 的形式 -->
+            <h1 style="color: red;">这是一个标题</h1>
+
+            <!-- 使用 v-bind 属性绑定对象的形式 -->
+            <!-- 对象就是无序键值对的集合 -->
+            <h1 :style="{'color': 'red', 'font-weight': '200'}">这是一个标题</h1>
+
+            <!-- 引用放在 data 中的属性 -->
+            <h1 :style="styleObj1">这是一个标题</h1>
+
+            <!-- 对象数组 -->
+            <h1 :style="[styleObj1, styleObj2]">这是一个标题</h1>
+
+        </div>
+        
+
+        <script>
+            var vm = new Vue({
+                el: '#app',
+                data: {
+                    styleObj1: {
+                        'color': 'red', 
+                        'font-weight': '200'
+                    },
+                    styleObj2: {
+                        'font-style': 'italic'
+                    }
+
+                },
+                methods: {
+                
+
+                },
+            })
+        </script>
+    </body>
+</html>
+```
+
+
+
+# 
