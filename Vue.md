@@ -470,7 +470,7 @@ v-html：将文本解析为 html 格式
 
 
 
-## v-for 指令和key 属性
+## v-for 指令和 key 属性
 
 1. 迭代数组
 
@@ -564,6 +564,10 @@ v-html：将文本解析为 html 格式
 
 3. 迭代对象中的属性
 
+<!-- 在遍历对象身上的键值对时，除了有 val 和 key，在第三个位置还有索引值 -->
+
+
+
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -607,6 +611,10 @@ v-html：将文本解析为 html 格式
 
 4. 迭代数字
 
+<!-- 如果 in 后面接的是普通数字，则 count 的值从 1 开始 -->
+
+
+
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -637,6 +645,138 @@ v-html：将文本解析为 html 格式
 
 </html>
 ```
+
+
+
+### key属性的使用
+
+<!-- 使用 v-for 循环，key属性只能使用 numbere 和 string -->
+<!-- 使用 key 时，必须使用 v-bind 绑定属性，指定 key 的值 -->
+<!-- 在组件中使用 v-for 循环的时候，或者在一些特殊的情况下，如果出现唯一性问题，则需要在使用 v-for 的同时，指定唯一的数字/字符串类型的 :key 值 -->
+
+
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="lib/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <div>
+            <input type="text" v-model="id">
+            ---
+            <input type="text" v-model="name">
+            <input type="button" value="添加" @click="add">
+        </div>
+
+        <!-- 使用 v-for 循环，key属性只能使用 numbere 和 string -->
+        <!-- 使用 key 时，必须使用 v-bind 绑定属性，指定 key 的值 -->
+        <!-- 在组件中使用 v-for 循环的时候，或者在一些特殊的情况下，如果出现唯一性问题，则需要在使用 v-for 的同时，指定唯一的数字/字符串类型的 :key 值 -->
+        <p v-for="item in list" :key="item.id">
+            <input type="checkbox">
+            {{ item.id }} --- {{ item.name }}
+        </p>
+    </div>
+    <script>
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                id: '',
+                name: '',
+
+                list: [
+                    {id: 1, name: "小赵"},   
+                    {id: 2, name: "小钱"},
+                    {id: 3, name: "小孙"},
+                    {id: 4, name: "小李"}                                 
+                ],
+            },
+            methods: {
+                add() {
+                    // this.list.push({ id: this.id, name: this.name })
+
+                    this.list.unshift({ id: this.id, name: this.name })                    
+                }
+            },
+        })
+    </script>
+</body>
+
+</html>
+```
+
+
+
+## v-if 和 v-show 指令的使用
+
+<!-- v-if 的特点：每次都会对元素进行删除或者添加操作 -->
+<!-- v-show 的特点：每次不会都 DOM 进行删除或者添加操作，只会改变 display：none 的样式 -->
+<!-- v-if 有较高的切换性能消耗 -->
+<!-- v-show 有较高的页面渲染消耗 -->
+<!-- 如果元素的显示与否被频繁改变，则推荐使用 v-show -->
+
+
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="lib/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <!-- <input type="button" value="点击切换显示标题" @click="isShow"> -->
+        <input type="button" value="点击切换显示标题" @click="flag = !flag"> <!-- 如果只有一句的函数可以将函数写到标签中 -->
+
+        <!-- v-if 的特点：每次都会对元素进行删除或者添加操作 -->
+        <!-- v-show 的特点：每次不会都 DOM 进行删除或者添加操作，只会改变 display：none 的样式 -->
+        <!-- v-if 有较高的切换性能消耗 -->
+        <!-- v-show 有较高的页面渲染消耗 -->
+        <!-- 如果元素的显示与否被频繁改变，则推荐使用 v-show -->
+        <h1 v-if="flag">这是一个标题</h1>
+        <h1 v-show="flag">这是一个标题</h1>
+        
+    </div>
+    <script>
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                flag: true,
+            },
+            methods: {
+                isShow() {
+                    // if(this.flag){
+                    //     this.flag = false
+                    // }
+                    // else{
+                    //     this.flag = true;
+                    // }
+                    this.flag = !this.flag
+                    
+                }
+            },
+        })
+    </script>
+</body>
+
+</html>
+```
+
+
 
 
 
