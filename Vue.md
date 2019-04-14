@@ -917,4 +917,153 @@ v-html：将文本解析为 html 格式
 
 
 
-# 
+# Vue 中的过滤器
+
+- vue 允许用自定义的过滤器，来做一些文本的格式化， 可以使用在两个地方：mustache 表达式和 v-bind 属性绑定表达式。添加在表达式的末尾，用管道符表示
+
+- -使用格式 `{{ name | nameope }}` 
+
+  - |：管道符
+  - nameope：自定义过滤器的名称
+
+- 过滤器的定义语法：`Vue.filter('过滤器的名称', function(){})`
+
+  - function(){}中的第一个参数已经被规定为管道符前传递过来的数据
+
+    ```javascript
+    Vue.filter('过滤器的名称', function(data){
+    	return data + '123'
+    })
+    ```
+
+
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="lib/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <!-- <p>{{ msg | msgFormat }}</p> -->
+        <!-- 可以给过滤器传递参数 -->
+        <!-- 可以多个过滤器同时使用 -->
+        <p>{{ msg | msgFormat('Holy shit', ' this time') | msgFormat2('===') }}</p>
+    </div>
+    <script>
+        // 定义一个过滤器
+
+        // Vue.filter('msgFormat',function(msg){
+        //     // return msg.replace('hello','goodbye')
+        //     // replace()的第一个参数除了可以传入一个字符串之外，也可以传入一个正则表达式
+        //     return msg.replace(/hello/g,'goodbye')
+        // })
+
+        Vue.filter('msgFormat', function (msg, arg1, arg2) {
+            // return msg.replace('hello','goodbye')
+            // replace()的第一个参数除了可以传入一个字符串之外，也可以传入一个正则表达式
+            return msg.replace(/hello/g, arg1 + arg2)
+        })
+
+        Vue.filter('msgFormat2', function (msg, arg1) {
+            return msg + arg1
+        })
+
+
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                msg: 'hello spring, hello summer, hello autumn, hello winter.'
+            },
+            methods: {
+            },
+        })
+    </script>
+</body>
+
+</html>
+```
+
+
+
+## Vue生命周期函数
+
+
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="lib/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+    </div>
+    <script>
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                msg: '你好~'
+            },
+            methods: {
+                show() {
+                    console.log(this.msg)
+                }
+            },
+
+            //生命周期函数
+
+            // 实例创建阶段
+            beforeCreate() {
+                // 在 beforeCreate 生命周期函数执行的时候，data 和 methods 的内容都还没有被初始化
+            },
+            created() {
+                // 在 created 生命周期函数执行的时候，data 和 methods 的内容已经被初始化好了
+            },
+            beforeMount() {
+                // 在 beforeMount 生命周期函数执行的时候，模板已经在内存中渲染好了，但是还尚未渲染到页面中，
+                // 页面上的元素还没有真正替换，只是之前写过的模板字符串
+            },
+            mounted() {
+                // 在 mounted 生命周期函数执行的时候，表示内存中的模块已经渲染到了页面上
+                // mounted 函数是实例创建的最后一个生命周期函数，执行完 mounted 之后，就表示实例已经完全被创建好了
+            },
+
+            // 运行中的两个事件
+            beforeUpdate() {
+                // 这个时候界面还没有被更新，但是 data 已经被更新了
+                // 当执行 beforeUpdate 的时候，页面上的数据还没有被更新，但是内存中的 data 数据已经被更新过，只是还没有更新到页面上
+            },
+            updated() {
+                // updated()执行的时候，页面上的数据已经被更新了，且和 data 数据已经保持同步
+            },
+
+            // 销毁过程
+            beforeDestroy() {
+                
+            },
+            destroyed() {
+                
+            },
+        })
+    </script>
+</body>
+
+</html>
+```
+
+
+
