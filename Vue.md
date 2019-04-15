@@ -1067,3 +1067,107 @@ v-html：将文本解析为 html 格式
 
 
 
+## Vue发送 AJAX 请求-axios
+
+官方文档：<https://github.com/axios/axios>
+
+
+
+示例：
+
+Performing a `GET` request
+
+- 传参的方式有两种：
+  - 通过 url 的形式传参
+  - 通过 param 参数进行传参
+
+```javascript
+const axios = require('axios');
+
+// Make a request for a user with a given ID
+axios.get('/user?ID=12345')
+  .then(function (response) {
+    // handle success
+    console.log(response);
+  })
+  .catch(function (error) {
+    // handle error
+    console.log(error);
+  })
+  .then(function () {
+    // always executed
+  });
+
+// Optionally the request above could also be done as
+axios.get('/user', {
+    params: {
+      ID: 12345
+    }
+  })
+  .then(function (response) {
+    console.log(response);
+  })
+  .catch(function (error) {
+    console.log(error);
+  })
+  .then(function () {
+    // always executed
+  });  
+
+// Want to use async/await? Add the `async` keyword to your outer function/method.
+async function getUser() {
+  try {
+    const response = await axios.get('/user?ID=12345');
+    console.log(response);
+  } catch (error) {
+    console.error(error);
+  }
+}
+```
+
+
+
+Performing a `POST` request
+
+axios 以 post 形式发送请求时，默认的数据格式是 Request Payload 的形式，而不是常见的 Form Data 表单数据的形式，所以参数必须要以键值对的形式发送
+
+```javascript
+axios.post('/user', {
+    firstName: 'Fred',
+    lastName: 'Flintstone'
+  })
+  .then(function (response) {
+    console.log(response);
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+```
+
+
+
+Performing multiple concurrent requests
+
+```javascript
+function getUserAccount() {
+  return axios.get('/user/12345');
+}
+
+function getUserPermissions() {
+  return axios.get('/user/12345/permissions');
+}
+
+axios.all([getUserAccount(), getUserPermissions()])
+  .then(axios.spread(function (acct, perms) {
+    // Both requests are now complete
+  }));
+```
+
+
+
+```html
+
+```
+
+
+
