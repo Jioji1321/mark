@@ -172,7 +172,7 @@ class StudentImpl extends Student{
 
 - 接口中的成员变量的缺省属性为
 
-```
+```java
 public static final
 ```
 
@@ -1130,35 +1130,37 @@ public class Demo2 {
       无法得知当前是第几个元素了，当需要只打印单数元素的时候，就做不到了。 必须再自定下标变量
 
 
-    ```java
-    package collection;
-     
-    import java.util.ArrayList;
-    import java.util.Iterator;
-    import java.util.List;
-     
-    import charactor.Hero;
-     
-    public class TestCollection {
-     
-        public static void main(String[] args) {
-            List<Hero> heros = new ArrayList<Hero>();
-     
-            // 放5个Hero进入容器
-            for (int i = 0; i < 5; i++) {
-                heros.add(new Hero("hero name " + i));
-            }
-     
-            // 第三种，增强型for循环
-            System.out.println("--------增强型for循环-------");
-            for (Hero h : heros) {
-                System.out.println(h);
-            }
-     
+~~~java
+```java
+package collection;
+ 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+ 
+import charactor.Hero;
+ 
+public class TestCollection {
+ 
+    public static void main(String[] args) {
+        List<Hero> heros = new ArrayList<Hero>();
+ 
+        // 放5个Hero进入容器
+        for (int i = 0; i < 5; i++) {
+            heros.add(new Hero("hero name " + i));
         }
-     
+ 
+        // 第三种，增强型for循环
+        System.out.println("--------增强型for循环-------");
+        for (Hero h : heros) {
+            System.out.println(h);
+        }
+ 
     }
-    ```
+ 
+}
+```
+~~~
 
   - 使用迭代器
 
@@ -5251,156 +5253,13 @@ public class EnumDemo {
 
 ---
 
-### 杂
 
-1. 访问修饰符public, private, protected, 以及不写（默认）时的区别？
 
 
 
-- public private protected friendly(不写时默认的访问修饰符)
 
-| 访问修饰符 | 当前类      | 子孙类      | 包内        | 包外        |
-| ---------- | ----------- | ----------- | ----------- | ----------- |
-| public     | 可以访问(✅) | 可以访问(✅) | 可以访问(✅) | 可以访问(✅) |
-| protected  | 可以访问(✅) | 可以访问(✅) | 可以访问(✅) | 不可访问(❌) |
-| friendly   | 可以访问(✅) | 可以访问(✅) | 不可访问(❌) | 不可访问(❌) |
-| private    | 可以访问(✅) | 不可访问(❌) | 不可访问(❌) | 不可访问(❌) |
 
 
-
-
-
-1. short s1 = 1; s1 = s1 + 1;有什么错? short s1 = 1; s1 +=1;有什么错?
-
-- short s1 = 1; s1 = s1 + 1;
-
-
-
-```java
-public class Demo1 {
-
-	public static void main(String[] args) {
-
-		short s1 = 1;
-		
-        // s1 = s1 + 1;//编译失败，需要加上类型强转(Type mismatch: cannot convert from int to short)
-		s1 += 1; //编译成功
-
-	}
-
-}
-```
-
-
-
-1. char类型变量能不能储存一个中文的汉字，为什么？
-
-- char 类型的编码是用来存储 unicode编码的字符的，汉字包含在 unicode 中，所以 char 类型变量是可以存放一个中文的汉字的。
-- unicode 占用两个字节，所以 char 类型的变量也是占用两个字节
-
-
-
-
-
-1. switch语句能否作用在byte上，能否作用在long上，能否作用在string上？
-
-- byte的存储范围小于int，可以向int类型进行隐式转换，所以switch可以作用在byte上。long的存储范围大于int，不能向int进行隐式转换，只能强制转换，所以switch不可以作用在long上。**string**在**1.7**版本之前不可以，**1.7**版本之后**switch**就可以作用在**string**上了。
-- switch 语句中的变量类型可以是： byte、short、int 或者 char。从 Java SE 7 开始，switch 支持字符串 String 类型了，同时 case 标签必须为字符串常量或字面量。
-
-
-
-##### springmvc 的工作流程
-
-![20180708224853769.png](/Users/zhouzhiliwen/Library/Application Support/typora-user-images/7F7EF0AB-EBBE-4960-A660-88E88DDFBE57/20180708224853769.png)
-
-
-
-（1）用户发送请求至前端控制器DispatcherServlet；
-
-（2） DispatcherServlet收到请求后，调用HandlerMapping处理器映射器，请求获取Handle；
-
-（3）处理器映射器根据请求url找到具体的处理器，生成处理器对象及处理器拦截器(如果有则生成)一并返回给DispatcherServlet；
-
-（4）DispatcherServlet通过HandlerAdapter处理器适配器调用处理器；
-
-（5）执行处理器(Handler，也叫后端控制器)；
-
-（6）Handler执行完成返回ModelAndView；
-
-（7）HandlerAdapter将Handler执行结果ModelAndView返回给DispatcherServlet；
-
-（8）DispatcherServlet将ModelAndView传给ViewResolver视图解析器进行解析；
-
-（9）ViewResolver解析后返回具体View；
-
-（10）DispatcherServlet对View进行渲染视图（即将模型数据填充至视图中）
-
-（11）DispatcherServlet响应用户。
-
-
-
-##### Spring的AOP理解：
-
-
-
-​        AOP，一般称为面向方面（切面）编程，作为面向对象的一种补充，用于解剖封装好的对象内部，找出其中对多个对象产生影响的公共行为，并将其封装为一个可重用的模块，这个模块被命名为“切面”（Aspect），切面将那些与业务无关，却被业务模块共同调用的逻辑提取并封装起来，减少了系统中的重复代码，降低了模块间的耦合度，同时提高了系统的可维护性。可用于权限认证、日志、事务处理。
-
-
-
-​        AOP实现的关键在于AOP框架自动创建的AOP代理，AOP代理主要分为静态代理和动态代理。静态代理的代表为AspectJ；动态代理则以Spring AOP为代表。
-
-
-
-（1）AspectJ是静态代理的增强，所谓静态代理，就是AOP框架会在编译阶段生成AOP代理类，因此也称为编译时增强，他会在编译阶段将AspectJ织入到Java字节码中，运行的时候就是增强之后的AOP对象。
-
-
-
-（2）Spring AOP使用的动态代理，所谓的动态代理就是说AOP框架不会去修改字节码，而是每次运行时在内存中临时为方法生成一个AOP对象，这个AOP对象包含了目标对象的全部方法，并且在特定的切点做了增强处理，并回调原对象的方法。
-
-
-
-Spring AOP中的动态代理主要有两种方式，JDK动态代理和CGLIB动态代理：
-
-​        ①JDK动态代理通过反射来接收被代理的类，并且要求被代理的类必须实现一个接口。JDK动态代理的核心是InvocationHandler接口和Proxy类。生成的代理对象的方法调用都会委托到InvocationHandler.invoke()方法，当我们调用代理类对象的方法时，这个“调用”会转送到invoke方法中，代理类对象作为proxy参数传入，参数method标识了我们具体调用的是代理类的哪个方法，args为这个方法的参数。
-
-​        ②如果目标类没有实现接口，那么Spring AOP会选择使用CGLIB来动态代理目标类。CGLIB（Code Generation Library），是一个代码生成的类库，可以在运行时动态的生成指定类的一个子类对象，并覆盖其中特定方法，覆盖方法时可以添加增强代码，从而实现AOP。CGLIB是通过继承的方式做的动态代理，因此如果某个类被标记为final，那么它是无法使用CGLIB做动态代理的。
-
-（3）静态代理与动态代理区别在于生成AOP代理对象的时机不同，相对来说AspectJ的静态代理方式具有更好的性能，但是AspectJ需要特定的编译器进行处理，而Spring AOP则无需特定的编译器处理。
-
-
-
-##### Spring的IoC理解：
-
-（1）IOC就是控制反转。就是对象的创建权反转交给Spring，由容器控制程序之间的依赖关系，作用是实现了程序的解耦合，而非传统实现中，由程序代码直接操控。(依赖)控制权由应用代码本身转到了外部容器，由容器根据配置文件去创建实例并管理各个实例之间的依赖关系，控制权的转移，是所谓反转，并且由容器动态的将某种依赖关系注入到组件之中。BeanFactory 是Spring IoC容器的具体实现与核心接口，提供了一个先进的配置机制，使得任何类型的对象的配置成为可能，用来包装和管理各种bean。
-
-（2）最直观的表达就是，IOC让对象的创建不用去new了，可以由spring自动生产，这里用的就是java的反射机制，通过反射在运行时动态的去创建、调用对象。spring就是根据配置文件在运行时动态的去创建对象，并调用对象的方法的。
-
-（3）Spring的IOC有三种注入方式 ： 
-
-​        第一是根据属性注入，也叫set方法注入； 
-
-​        第二种是根据构造方法进行注入； 
-
-​        第三种是根据注解进行注入。
-
-详细的说：
-
-（4）IoC，控制反转：将对象交给容器管理，你只需要在spring配置文件总配置相应的bean，以及设置相关的属性，让spring容器生成类的实例对象以及管理对象。在spring容器启动的时候，spring会把你在配置文件中配置的bean都初始化以及装配好，然后在你需要调用的时候，就把它已经初始化好的那些bean分配给你需要调用这些bean的类。就是将对象的控制权反转给spring容器管理。
-
-（5）DI机制（Dependency Injection，依赖注入）：可以说是IoC的其中一个内容，在容器实例化对象的时候主动的将被调用者（或者说它的依赖对象）注入给调用对象。比如对象A需要操作数据库，以前我们总是要在A中自己编写代码来获得一个Connection对象，有了 spring我们就只需要告诉spring，A中需要一个Connection，至于这个Connection怎么构造，何时构造，A不需要知道。在系统运行时，spring会在适当的时候制造一个Connection，然后像打针一样，注射到A当中，这样就完成了对各个对象之间关系的控制。
-
-
-
-IoC让相互协作的组件保持松散的耦合，而AOP编程允许你把遍布于应用各层的功能分离出来形成可重用的功能组件。
-
-
-
-##### 请说出你所知道的线程同步的方法。
-
-wait():使一个线程处于等待状态，并且释放所持有的对象的lock。
- sleep():使一个正在运行的线程处于睡眠状态，是一个静态方法，调用此方法要捕捉InterruptedException异常。
- notify():唤醒一个处于等待状态的线程，注意的是在调用此方法的时候，并不能确切的唤醒某一个等待状态的线程，而是由JVM确定唤醒哪个线程，而且不是按优先级。
- notityAll():唤醒所有处入等待状态的线程，注意并不是给所有唤醒线程一个对象的锁，而是让它们竞争。
 
 
 
