@@ -1639,12 +1639,22 @@ str1==str2        //True
 
 字符串的空串指的是“”而不是null    “”是字符串 null是地址
 
-其他类型转换为字符串  在后面加个空串
+**其他类型转换为字符串  在后面加个空串**
 
 ```
 int i = 1;
 String str = i + ””;
 ```
+
+
+
+如果需要将多个字符串放在一起，用一个定界符分割，可以使用静态的join方法：
+
+```java
+String all = String.join('/','S','M','L','XL');
+```
+
+
 
 
 
@@ -3696,6 +3706,10 @@ public class text {
 
 
 
+
+
+
+
 ---
 
 
@@ -5213,13 +5227,162 @@ public class EnumDemo {
 
 ---
 
-### 位运
+### 位运算符
 
 \>>> 运算符会用0填充最高位，>> 运算符会用符号位填充最高位，不存在<<< 运算符
 
 
 
+---
 
+## 数组
+
+```java
+package array;
+
+import java.util.Arrays;
+
+public class TestMain {
+
+	public static void main(String[] args) {
+		int[] arr = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+		System.out.println(arr.length);
+
+		// 测试 for-each 循环
+		for (int i : arr) {
+			System.out.print(i + " ");
+		}
+
+		System.out.println();
+
+		// 打印数组
+		System.out.println(Arrays.toString(arr));
+
+		int[] newArr = arr; // 两个变量引用同一个数组
+		arr[10] = 678;
+		System.out.println(newArr[10]);
+
+		System.out.println();
+
+		// 拷贝数组
+		int[] copyArr = Arrays.copyOf(arr, 9); // 9表示拷贝的新数组长度，这个方法主要用在增加数组的大小
+		System.out.println(Arrays.toString(copyArr));
+
+		System.out.println();
+
+		// 数组排序
+		// 使用foreach时，是赋值给了一个临时变量，采用值传递，临时变量的改变并不会改变arr[i]本身
+		// foreach 循环仅可用于遍历输出数组，但不能用于修改数组
+		int[] randomArr = new int[10];
+		for (int i = 0; i < randomArr.length; i++) {
+			randomArr[i] = (int) (Math.random() * 100);
+		}
+		System.out.println("排序前的数组：");
+		System.out.println(Arrays.toString(randomArr));
+		System.out.println("排序后的数组：");
+		Arrays.sort(randomArr); // 优化后的快速排序
+		System.out.println(Arrays.toString(randomArr));
+
+		System.out.println();
+
+		// 多维数组
+		int[][] multipartArr = { { 1, 2, 3, 4, 5 }, { 6, 7, 8, 9, 0 } };
+
+		// 遍历多维数组
+		for (int i = 0; i < multipartArr.length; i++) {
+			for (int j = 0; j < multipartArr[i].length; j++) {
+				System.out.print(multipartArr[i][j] + " ");
+			}
+		}
+		
+		System.out.println();
+		// 使用foreach循环
+		for (int[] i : multipartArr) {
+			for (int j : i) {
+				System.out.print(j + " ");
+			}
+		}
+		
+		System.out.println();
+		//第三种方法
+		System.out.println(Arrays.deepToString(multipartArr));
+	}
+
+}
+```
+
+
+
+---
+
+## 格式化输出
+
+```java
+package geshihua_shuchu;
+
+public class TestMain {
+
+	public static void main(String[] args) {
+		
+		Double doubleNum = 300000000.00 / 15000000.00;
+		System.out.printf("%2.4f",doubleNum); // 2.4f，小数点前保留两位，不足的位数用空格补足；小数点后保留4位小数，f转换为定点浮点数
+	}
+
+}
+```
+
+
+
+---
+
+## 文件输入输出
+
+```java
+package wenjian_shuru_shuchu;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.util.Scanner;
+
+public class TestMain {
+
+	private final static String FILE_DIRECTORY = "D:\\Java_workspace\\java_jishu_hexinquan\\src\\wenjian_shuru_shuchu\\testDir\\";
+	
+	@SuppressWarnings("resource")
+	public static void main(String[] args) throws IOException {
+		
+		//获取当前根目录， D:\Java_workspace\java_jishu_hexinquan
+		String location = System.getProperty("user.dir");
+		System.out.println(location);
+		
+		// 读取方法
+		Scanner in = new Scanner(
+				Paths.get(FILE_DIRECTORY + "testRead.txt"),
+				"UTF-8");
+		if (in.hasNext()) {
+			System.out.println(in.next());
+		}
+
+		// 写入方法
+		File dir = new File(FILE_DIRECTORY);
+		//判断目录是否存在，不存在则创建
+		if(!(dir.exists())) {
+			dir.mkdirs();
+		}
+		PrintWriter out = new PrintWriter(FILE_DIRECTORY + "testOut.txt","UTF-8");
+		//out.append("测试写入文件：12345");
+		out.println("这个方法是怎么使用的呢？");
+		out.println("这个方法是怎么使用的呢？");
+		
+		in.close();
+		out.close();
+	}
+
+}
+```
 
 
 
