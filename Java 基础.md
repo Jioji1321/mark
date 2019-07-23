@@ -743,6 +743,45 @@ static 的使用场景是存在大量重复数据的变量，可以大大节约�
 类方法：指的是使用类名直接调用的方法 —> 静态成员方法
 类变量：指的是使用类名直接可以使用的成员变量 —>静态成员变量 
 
+
+
+- 静态变量相当于一个共享变量，不管这个类有多少个对象，都会共享这一个变量
+
+```java
+package static_jingtai;
+
+public class TestMain {
+
+	public static void main(String[] args) {
+		Employee e1 = new Employee();
+		e1.setId();
+		System.out.println(e1.getId()); //0
+		
+		Employee e2 = new Employee();
+		e2.setId();
+		System.out.println(e2.getId()); //1
+	}
+}
+
+class Employee{
+	private static int index = 0;
+	
+	private int id;
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId() {
+		id = index;
+		index++;
+	}
+	
+}
+```
+
+
+
 ---
 
 ### 关于重写
@@ -5385,6 +5424,71 @@ public class TestMain {
 ```
 
 
+
+---
+
+## 可变对象引用获取
+
+- 如果需要获取一个可变对象的引用，应首先对它进行clone。对象clone指的是存放在另一个位置上的对象副本。
+
+```java
+package object;
+
+import java.util.Date;
+
+public class Employee {
+
+	private Date hireDay;
+
+	public Date getHireDay() {
+		//return hireDay;
+		return (Date) hireDay.clone();
+	}
+
+	public void setHireDay(Date hireDay) {
+		this.hireDay = hireDay;
+	}
+	
+	public Employee(Date hireDay) {
+		this.hireDay = hireDay;
+	}
+
+	public static void main(String[] args) {
+		Employee harry = new Employee(new Date());
+		Date d = harry.getHireDay();
+		double tenYearsInMilliSeconds = 10 * 365 * 24 * 60 * 60 * 1000;
+		d.setTime(d.getTime() - (long)tenYearsInMilliSeconds); // java.lang.NullPointerException
+		
+		System.out.println();
+		/**
+		 * 出错原因：
+		 * d和harry.getHireday()引用的是同一个Date对象，对d调用更改器（setter方法）就可以自动改变这个Employee对象的私有化
+		 */
+	}
+}
+```
+
+
+
+---
+
+## 可变类中的Final关键字修饰
+
+```java
+private final StringBuilder evaluations;
+
+evaluations = new StringBuilder();
+
+//final 关键字只是表示存储在evalutions变量中的对象引用不会再指向其他StringBuilder对象，但是这个对象可以更改：
+
+public void giveGoldStar(){
+    evalutions.append(LocalDate.now() + ": Gold Star!\n");
+}
+```
+
+
+
+---
 
 
 
