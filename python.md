@@ -1,8 +1,28 @@
 # 交互式输入输出
 
 ```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 name = input('请输入：')
 print('hello,',name)
+
+# birth = input('请输入你的出生年份：')
+# if birth < 2000:
+#     print('00前')
+# else:
+#     print('00后')
+
+# 以上报错，原因是input的返回数据类型是str，str不能够和整数直接比较
+# 必须先把str转换为整数，才能进行比较
+# python提供了int()方法来完成这个过程
+s = input('请输入你的出生年份：')
+birth = int(s)
+if birth < 2000:
+    print('00前')
+else:
+    print('00后')
+
 ```
 
 
@@ -102,6 +122,180 @@ print('%2.1f' % r)
 # list 和 tuple
 
 ```python
+# list
+# list是一种有序的集合，可以随时添加和删除其中的元素
+classmates = ['mike','bob','sarah','chander','tom','jerry']
+print(classmates)
+
+# 用len()可以获取list元素的个数
+print(len(classmates))
+
+print(classmates[1])
+
+# 当索引超出了范围时，Python会报一个IndexError错误，所以，
+# 要确保索引不要越界，记得最后一个元素的索引是len(classmates) - 1
+
+# 如果要取最后一个元素，除了计算索引位置外，还可以用-1做索引，直接获取最后一个元素
+print(classmates[-1])
+print(classmates[-3])
+
+# list是一个可变的有序表，所以，可以往list中追加元素到末尾：
+classmates.append('black')
+print(classmates)
+
+# 也可以把元素插入到指定的位置
+classmates.insert(2,'tony')
+print(classmates)
+
+# pop()用于删除list末尾的元素
+classmates.pop()
+print(classmates)
+
+# pop(i)用于删除指定位置的元素
+classmates.pop(3)
+print(classmates)
+
+# 要把某个元素替换成别的元素，可以直接赋值给对应的索引位置：
+classmates[1] = 'dick'
+print(classmates)
+
+# list中的元素可以为不同类型
+L = ['A',23,'Michael Jordan',True]
+print(L)
+
+# list中可以包含另外一个list
+s = [['Python','Ruby'],['C++','Java'],['Mysql','Oracle']]
+print(s)
+print(s[1][1])
+
+# list中如果一个元素也没有，则为空的list，长度为0
+p = []
+print(p)
+print(len(p))
+
+# tuple
+# tuple 叫做元组，一旦初始化就不可修改
+# list 使用的是[],tuple 使用的是()
+classmates = ('Mike','Tony','Jerry')
+
+# 现在，classmates这个tuple不能变了，它也没有append()，insert()这样的方法。其他获取元素的方法和list是一样的，
+# 你可以正常地使用classmates[0]，classmates[-1]，但不能赋值成另外的元素
+
+# 不可变的tuple有什么意义？因为tuple不可变，所以代码更安全。如果可能，能用tuple代替list就尽量用tuple
+
+# 要定义一个只有一个元素的tuple，需要按照以下格式
+t = (1,)
+
+# tuple所谓的“不变”是说，tuple的每个元素，指向永远不变。即指向'a'，就不能改成指向'b'，
+# 指向一个list，就不能改成指向其他对象，但指向的这个list本身是可变的！
+t = (1,2,['Mike','Peter'])
+t[2][0] = 'Kuzma'
+print(t) # (1, 2, ['Kuzma', 'Peter'])
+
+# 空tuple，长度为0
+T = ()
+print(len(T))
+
 
 ```
+
+
+
+# 条件判断
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+# 条件判断 if, 注意 :
+age = 14
+print('ur age is ', age)
+if age >= 18:
+    print('adult')
+else:
+    print('youngster')
+
+# 用elif 表示else if
+age = 1
+print('ur age is ', age)
+if age >= 18:
+    print('adult')
+elif age > 10:
+    print('youngster')
+elif age > 8:
+    print('children')
+else:
+    print('baby')
+
+# if 判断条件可以简写,只要x是非零数值、非空字符串、非空list等，就判断为True，否则为False。
+x = ()
+if x:
+    print('True')
+else:
+    print('False')
+
+
+
+height = 1.83
+weight = 70
+
+bmi = weight / (height ** 2)
+if bmi < 18.5:
+    print('过轻')
+elif bmi < 25.0:
+    print('正常')
+elif bmi < 28.0:
+    print('过重')
+elif bmi < 32.0:
+    print('肥胖')
+else:
+    print('过度肥胖')
+```
+
+
+
+# 循环
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+# for循环
+names = ['Mike','Micheal','Kobe']
+for x in names:
+    print(x)
+
+# Python提供一个range()函数，可以生成一个整数序列，
+# 再通过list()函数可以转换为list。
+L = list(range(5))
+print(L) # [0, 1, 2, 3, 4]
+
+# while循环
+sum = 0
+n = 99
+while n > 0:
+    sum = sum + n
+    n = n - 2
+print(sum)
+
+# break,可以提前退出循环
+n = 1
+while n <= 10:
+    if n > 5:
+        break
+    print(n)
+    n = n + 1
+print('END')
+
+
+# continue，退出本次循环
+n = 0
+while n < 10:
+    n = n + 1
+    if n % 2 == 0: # 如果n是偶数，执行continue语句
+        continue # continue语句会直接继续下一轮循环，后续的print()语句不会执行
+    print(n)
+```
+
+
 
