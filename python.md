@@ -299,3 +299,339 @@ while n < 10:
 
 
 
+# dict（字典）和set
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+# https://www.liaoxuefeng.com/wiki/1016959663602400/1017104324028448
+
+
+# dict 字典，在其他语言中也叫作map，使用键值对的方式存储数据(key-value)，查找速度极快
+d = {'Michael': 95,'Bob': 90,'Tony': 89}
+print(d['Michael'])
+
+# 将数据放入dict的方法，除了初始化时指定之外，还可以通过key放入
+d['Adam'] = 97
+print(d['Adam'])
+
+
+# 如果同时对同一个key值存放数据，新值将会替换旧值
+
+# 如果key值不存在，就会报错
+# 为了避免key值不存在报错，有两种方法
+# 1. 通过in判断
+print('Tomas' in d)
+
+# 2. 通过dict提供的get()方法，如果key不存在可以返回None，或者自定义的value
+print(d.get('Tomas'))
+print(d.get('Tomas'),-1)
+
+# 删除一个key，使用pop(key)方法，对应的value值也会从dict中删除
+print(d)
+d.pop('Michael')
+print(d)
+
+# dict内部存放的顺序和key放入的顺序是没有关系的。
+
+# 和list比较，dict有以下几个特点：
+# 1. 查找和插入的速度极快，不会随着key的增加而变慢；
+# 2. 需要占用大量的内存，内存浪费多。
+# 而list相反：
+# 1. 查找和插入的时间随着元素的增加而增加；
+# 2. 占用空间小，浪费内存很少。
+# 所以，dict是用空间来换取时间的一种方法。
+
+# dict可以用在需要高速查找的很多地方，在Python代码中几乎无处不在，
+# 正确使用dict非常重要，需要牢记的第一条就是dict的key必须是不可变对象。
+
+# 这是因为dict根据key来计算value的存储位置，如果每次计算相同的key得出的结果不同，那dict内部就完全混乱了。
+# 这个通过key计算位置的算法称为哈希算法（Hash）。
+# 要保证hash的正确性，作为key的对象就不能变。
+# 在Python中，字符串、整数等都是不可变的，因此，可以放心地作为key。而list是可变的，就不能作为key
+
+
+# set 和 dict类似，也是一个key的集合，但不存储value。
+# 由于key不能重复，所以在set中没有重复的元素
+
+# 创建一个set，需要提供一个list作为输入集合
+s = set([1,2,3,4])
+print(s)
+
+# 重复元素被过滤
+s = set([1,1,2,2,3,3,4,5,6])
+print(s)
+
+# 通过add(key)的方法可以添加元素到set中，可以重复添加但是没有效果
+s.add(7)
+print(s)
+s.add(7)
+print(s)
+
+# 通过remove(key)方法可以删除元素
+s.remove(2)
+print(s)
+
+# set可以看成数学意义上的无序和无重复元素的集合，因此，两个set可以做数学意义上的交集、并集等操作：
+s1 = set([1,2,3])
+s2 = set([1,3,4])
+print(s1 & s2)
+print(s1 | s2)
+
+# set和dict的唯一区别仅在于没有存储对应的value，但是，set的原理和dict一样，所以，同样不可以放入可变对象，
+# 因为无法判断两个可变对象是否相等，也就无法保证set内部“不会有重复元素”。试试把list放入set，看看是否会报错。
+# l1 = [1,2,3,4]
+# l2 = [2,3,4,5]
+# s = set([l1,l2]) #TypeError: unhashable type: 'list'
+# print(s)
+
+t1 = (1,2,3)
+t2 = (1,2,[3,4])
+print(set(t1))
+# print(set(t2)) # TypeError: unhashable type: 'list'
+
+# 再议不可变对象
+# 字符串是不可变对象
+a = 'abc'
+print(a.replace('a','A'))
+print(a)
+
+# 要始终牢记的是，a是变量，而'abc'才是字符串对象！
+# 有些时候，我们经常说，对象a的内容是'abc'，但其实是指，a本身是一个变量，它指向的对象的内容才是'abc'：
+# 当我们调用a.replace('a', 'A')时，实际上调用方法replace是作用在字符串对象'abc'上的，而这个方法虽然名字叫replace，
+# 但却没有改变字符串'abc'的内容。相反，replace方法创建了一个新字符串'Abc'并返回，
+# 如果我们用变量b指向该新字符串，就容易理解了，变量a仍指向原有的字符串'abc'，但变量b却指向新字符串'Abc'了：
+```
+
+
+
+
+
+# 函数
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+import math
+
+# https://www.liaoxuefeng.com/wiki/1016959663602400/1017105145133280
+print(abs(100))
+print(abs(-100))
+
+print(max(1, 2))
+print(min(1, 2))
+
+# 数据类型转换
+# int()函数可以将其他数据类型转换为整数
+print(int('1234'))
+print(float('3.1415'))
+print(str(1234))
+print(bool(1))
+print(bool(''))
+
+# 函数名其实就是指向一个函数对象的引用，
+# 完全可以把函数名赋给一个变量，相当于给这个函数起了一个“别名”：
+a = abs
+print(a(-1))
+
+# hex()可以将一个整数转换成十六进制表示的字符串
+
+# 定义函数
+# 在Python中，定义一个函数要使用def语句，依次写出函数名、括号、括号中的参数和冒号:，
+# 然后，在缩进块中编写函数体，函数的返回值用return语句返回。
+
+
+def my_abs(x):
+    if x > 0:
+        return x
+    else:
+        return -x
+
+
+print(my_abs(1))
+print(my_abs(-1))
+
+# 空函数
+
+
+def nop():
+    pass
+
+
+def testFunc(x):
+    if x > 18:
+        pass
+
+
+# 参数检查
+# 数据类型检查可以用内置函数isinstance()实现
+def my_abs2(x):
+    if not isinstance(x, (int, float)):
+        raise TypeError('bad operand type!')
+    if x >= 0:
+        return x
+    else:
+        return -x
+
+
+print(my_abs2(123))
+print(my_abs2(123.345))
+# print(my_abs2('123')) # TypeError: bad operand type!
+
+
+# 函数返回多个值
+def move(x, y, step, angle=0):
+    nx = x + step * math.cos(angle)
+    ny = y-step*math.sin(angle)
+    return nx, ny
+
+
+x, y = move(100, 100, 60, math.pi / 6)
+print(x, y)
+
+r = move(100, 100, 60, math.pi / 6)
+print(r)
+
+# 原来返回值是一个tuple！但是，在语法上，返回一个tuple可以省略括号，
+# 而多个变量可以同时接收一个tuple，按位置赋给对应的值，
+# 所以，Python的函数返回多值其实就是返回一个tuple，但写起来更方便。
+
+# 定义函数时，需要确定函数名和参数个数；
+# 如果有必要，可以先对参数的数据类型做检查；
+# 函数体内部可以用return随时返回函数结果；
+# 函数执行完毕也没有return语句时，自动return None。
+# 函数可以同时返回多个值，但其实就是一个tuple。
+
+
+# 函数的参数
+# 定义函数的时候，我们把参数的名字和位置确定下来，函数的接口定义就完成了。
+# 对于函数的调用者来说，只需要知道如何传递正确的参数，以及函数将返回什么样的值就够了，
+# 函数内部的复杂逻辑被封装起来，调用者无需了解。
+
+# Python的函数定义非常简单，但灵活度却非常大。除了正常定义的必选参数外，
+# 还可以使用默认参数、可变参数和关键字参数，使得函数定义出来的接口，不但能处理复杂的参数，
+# 还可以简化调用者的代码。
+
+# 位置参数
+# def power(x):  # 计算x的平方
+#     return x * x
+
+# 对于power(x)函数，参数x就是一个位置参数。
+# print(power(2))
+
+# def power(x, n):  # 计算x的n次方
+#     s = 1
+#     while n > 0:
+#         n = n - 1
+#         s = s * x
+#     return s
+
+
+# print(power(2, 3))
+
+# 修改后的power(x, n)函数有两个参数：x和n，这两个参数都是位置参数，调用函数时，传入的两个值按照位置顺序依次赋给参数x和n。
+
+# 默认参数
+
+
+def power(x, n=2):  # 计算x的n次方
+    s = 1
+    while n > 0:
+        n = n - 1
+        s = s * x
+    return s
+
+
+print(power(5))
+
+# 从上面的例子可以看出，默认参数可以简化函数的调用。设置默认参数时，有几点要注意：
+# 一是必选参数在前，默认参数在后，否则Python的解释器会报错（思考一下为什么默认参数不能放在必选参数前面）；
+# 二是如何设置默认参数。当函数有多个参数时，把变化大的参数放前面，变化小的参数放后面。变化小的参数就可以作为默认参数。
+# def enroll(name,gender):
+#     print('name:', name)
+#     print('gender:',gender)
+
+# print(enroll('Sarah','female'))
+
+
+def enroll(name, gender, age=6, city='Beijing'):
+    print('name:', name)
+    print('gender:', gender)
+    print('age:', age)
+    print('city:', city)
+
+
+x = enroll('Sarah', 'female')
+print(x)
+# name: Sarah
+# gender: female
+# age: 6
+# city: Beijing
+# None  <=  最后打印了自身的对象？
+
+# 有多个默认参数时，调用的时候，既可以按顺序提供默认参数，比如调用enroll('Bob', 'M', 7)，意思是，除了name，gender这两个参数外，
+# 最后1个参数应用在参数age上，city参数由于没有提供，仍然使用默认值。
+# 也可以不按顺序提供部分默认参数。当不按顺序提供部分默认参数时，需要把参数名写上。比如调用enroll('Adam', 'M', city='Tianjin')，
+# 意思是，city参数用传进去的值，其他默认参数继续使用默认值。
+
+# 定义默认参数要牢记一点：默认参数必须指向不变对象！
+# def add_end(L=[]):
+#     L.append('END')
+#     return L
+
+# print(add_end()) #['END']
+# print(add_end()) #['END', 'END']
+
+
+def add_end(L=None):
+    if L is None:
+        L = []
+    L.append('END')
+    return L
+
+
+print(add_end())  # ['END']
+print(add_end())  # ['END', 'END']
+
+
+
+# 可变参数
+```
+
+
+
+
+
+## 外部函数引用
+
+extern_function.py：
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+def my_abs(x):
+    if x > 0:
+        return x
+    else:
+        return -x
+```
+
+
+
+main_function.py：
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+from extern_function import my_abs
+
+print(my_abs(-100))
+print(my_abs(99))
+```
+
+
+
