@@ -569,7 +569,10 @@ print(x)
 # gender: female
 # age: 6
 # city: Beijing
-# None  <=  最后打印了自身的对象？
+# None <=
+# 前四个输出 就是执行函数的时候输出的 最后一个None值 是执行函数之后的返回值 print(返回值)
+# 所以就是输出了一个None
+
 
 # 有多个默认参数时，调用的时候，既可以按顺序提供默认参数，比如调用enroll('Bob', 'M', 7)，意思是，除了name，gender这两个参数外，
 # 最后1个参数应用在参数age上，city参数由于没有提供，仍然使用默认值。

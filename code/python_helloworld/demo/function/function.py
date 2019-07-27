@@ -150,13 +150,16 @@ def enroll(name, gender, age=6, city='Beijing'):
     print('city:', city)
 
 
-x = enroll('Sarah', 'female')
-print(x)
+enroll('Sarah', 'female')
+# x = enroll('Sarah', 'female')
+# print(x)
 # name: Sarah
 # gender: female
 # age: 6
 # city: Beijing
-# None  <=  最后打印了自身的对象？
+# None  <=
+# 前四个输出 就是执行函数的时候输出的 最后一个None值 是执行函数之后的返回值 print(返回值)
+# 所以就是输出了一个None
 
 # 有多个默认参数时，调用的时候，既可以按顺序提供默认参数，比如调用enroll('Bob', 'M', 7)，意思是，除了name，gender这两个参数外，
 # 最后1个参数应用在参数age上，city参数由于没有提供，仍然使用默认值。
@@ -183,5 +186,86 @@ print(add_end())  # ['END']
 print(add_end())  # ['END', 'END']
 
 
-
 # 可变参数
+# 可变参数就是传入的参数个数是可变的，可以是1个、2个到任意个，还可以是0个。
+def calc(numbers):
+    sum = 0
+    for n in numbers:
+        sum = sum + n * n
+    return sum
+
+
+# 调用函数的时候，需要将传入的参数组装成一个list或者tuple
+print(calc([1, 2, 3, 4]))
+print(calc((1, 3, 5, 7)))
+
+
+# 利用可变参数
+def calc2(*numbers):
+    sum = 0
+    for n in numbers:
+        sum = sum + n * n
+    return sum
+
+
+print(calc2(1, 2, 3))
+print(calc2(1, 3, 5, 7))
+
+
+# 定义可变参数和定义一个list或tuple参数相比，仅仅在参数前面加了一个*号。
+# 在函数内部，参数numbers接收到的是一个tuple，因此，函数代码完全不变。
+# 但是，调用该函数时，可以传入任意个参数，包括0个参数：
+print(calc2())
+print(calc2(1, 2))
+
+
+# 如果已经有一个list或者tuple，可以用以下方法
+nums = [1, 2, 3]
+print(calc2(nums[0], nums[1], nums[2]))
+
+
+# 可以在list或者tuple前面加上一个*，将其变成可变参数传进去
+print(calc2(*nums))
+# *nums表示把nums这个list的所有元素作为可变参数传进去。
+
+
+# 关键字参数
+# 关键字参数允许传入0个或者任意个含参数名的参数，这些关键字参数在函数内部自动组装为一个dict
+def person(name, age, **kw):
+    print('name:', name, ', age:', age, ', other:', kw)
+
+
+person('Michael', 30)
+
+
+# 也可以传入任意个数的关键字参数
+person('Bob', 35, cuty='Beijing')
+person('Adam', 45, gender='M', job='Engineer')
+
+
+# 关键字参数有什么用？它可以扩展函数的功能。比如，在person函数里，我们保证能接收到name和age这两个参数，
+# 但是，如果调用者愿意提供更多的参数，我们也能收到。试想你正在做一个用户注册的功能，除了用户名和年龄是必填项外，
+# 其他都是可选项，利用关键字参数来定义这个函数就能满足注册的需求。
+
+# 和可变参数类似，也可以先组装出一个dict，然后，把该dict转换为关键字参数传进去：
+extra = {'city': 'Beijing', 'job': 'Engineer'}
+person('Jack', 24, **extra)
+
+
+# **extra表示把extra这个dict的所有key-value用关键字参数传入到函数的**kw参数，kw将获得一个dict，
+# 注意kw获得的dict是extra的一份拷贝，对kw的改动不会影响到函数外的extra。
+
+
+# 命名关键字参数
+# 对于关键字参数，函数的调用者可以传入任意不受限制的关键字参数，至于到底传入了哪些，就需要在函数内部通过kw检查
+def person2(name, age, **kw):
+    if 'city' in kw:
+        # 有city参数
+        pass
+    if 'job' in kw:
+        # 有job参数
+        pass
+    print('name:', name, ', age:', age, ', other:', kw)
+
+
+person2('Jack', 24, city='Beijing', addr='Chaoyang', zipCode=123456)
