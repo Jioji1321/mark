@@ -28,8 +28,8 @@ public class TestReadMain {
 
 		// FileInputStream和FileOutputStream
 		// 读取文本
-		try {
-			FileInputStream in = new FileInputStream(file1);
+		try (FileInputStream in = new FileInputStream(file1); FileInputStream in1 = new FileInputStream(file1);) {
+			// FileInputStream in = new FileInputStream(file1);
 
 			// 一个一个字节的读取，效率慢
 			int i = in.read();
@@ -40,14 +40,14 @@ public class TestReadMain {
 
 			// 以byte数组的形式读取，速度会快一些
 			byte[] bytes = new byte[1024]; // 以1024个字节也就是1kb的方式去读取，如果文件大小不超过1kb就会全部读取，将读取到的内容放在byte数组中并返回文本内容的字节数
-			FileInputStream in1 = new FileInputStream(file1);
+//			FileInputStream in1 = new FileInputStream(file1);
 			int i1 = in1.read(bytes);
 			String s = new String(bytes);
 			System.out.println(s);
 			System.out.println(i1);
 
-			in.close();
-			in1.close();
+//			in1.close();
+//			in.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

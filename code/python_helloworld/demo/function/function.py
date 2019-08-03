@@ -3,7 +3,7 @@
 
 import math
 
-# https://www.liaoxuefeng.com/wiki/1016959663602400/1017105145133280
+
 print(abs(100))
 print(abs(-100))
 
@@ -183,7 +183,7 @@ def add_end(L=None):
 
 
 print(add_end())  # ['END']
-print(add_end())  # ['END', 'END']
+print(add_end())  # ['END']
 
 
 # 可变参数
@@ -269,3 +269,89 @@ def person2(name, age, **kw):
 
 
 person2('Jack', 24, city='Beijing', addr='Chaoyang', zipCode=123456)
+
+# 如果要限制关键字参数的名字，就可以用命名关键字参数
+
+
+def person3(name, age, *, city, job):
+    print(name, age, city, job)
+
+
+person3('Jack', 24, city='Beijing', job='Engineer')
+
+
+# 如果函数定义中已经有一个可变参数，后面跟着的命名关键字参数就不在需要一个特殊分割符*了
+def person4(name, age, *args, city, job):
+    print(name, age, args, city, job)
+
+
+# 命名关键字参数必须传入参数名，这和位置参数不同，如果没有传入参数名，调用会报错
+# person('Jack', 24, 'Beijing', 'Engineer')
+# Traceback (most recent call last):
+#   File "<stdin>", line 1, in <module>
+# TypeError: person() takes 2 positional arguments but 4 were given
+
+
+# 由于调用时缺少参数名city和job，Python解释器把这4个参数均视为位置参数，但person()函数仅接受2个位置参数。
+
+# 命名关键字参数可以有缺省值，从而简化调用：
+def person5(name, age, *, city='Beijing', job):
+    print(name, age, city, job)
+
+
+person5('Jack', 24, job='Engineer')
+
+# 使用命名关键字参数时，要特别注意，如果没有可变参数，就必须加一个*作为特殊分隔符。如果缺少*，Python解释器将无法识别位置参数和命名关键字参数：
+
+
+# 参数组合
+# 在Python中定义函数，可以用必选参数、默认参数、可变参数、关键字参数和命名关键字参数，这5种参数都可以组合使用。但是请注意，参数定义的顺序必须是：必选参数、默认参数、可变参数、命名关键字参数和关键字参数。
+def f1(a, b, c=0, *args, **kw):
+    print('a =', a, 'b =', b, 'c =', c, 'args =', args, 'kw =', kw)
+
+
+def f2(a, b, c=0, *, d, **kw):
+    print('a =', a, 'b =', b, 'c =', c, 'd =', d, 'kw =', kw)
+
+
+f1(1, 2)
+f1(1, 2, c=3)
+f1(1, 2, 3, 'a', 'b')
+f1(1, 2, 3, 'a', 'b', x=99)
+f2(1, 2, d=99, ext=None)
+
+
+# 通过一个tuple和dict，你也可以调用上述函数：
+args = (1, 2, 3, 4)
+kw = {'d': 99, 'x': '#'}
+f1(*args, **kw)
+
+
+# 对于任意函数，都可以通过类似func(*args, **kw)的形式调用它，无论它的参数是如何定义的。
+
+
+
+
+
+
+# 递归函数
+# https://www.liaoxuefeng.com/wiki/1016959663602400/1017268131039072
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

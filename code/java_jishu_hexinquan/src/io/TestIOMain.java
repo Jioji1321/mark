@@ -10,7 +10,7 @@ public class TestIOMain {
 	private static final String DIR = System.getProperty("user.dir") + File.separator + "src" + File.separator + "io"
 			+ File.separator + "fileDir" + File.separator;
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 
 		File file1 = new File(DIR + "test1.txt");
 
@@ -27,7 +27,9 @@ public class TestIOMain {
 		File file2 = new File(DIR + "testDir1" + File.separator + "testDir2");
 		boolean flag1 = file2.mkdir(); // false
 		boolean flag2 = file2.mkdirs(); // true
-		System.out.println(flag1 + " " + flag2);
+		File file3 = new File(DIR + "testDir1" + File.separator + "testDir2" + File.separator+"test.txt");
+		boolean flag3 = file3.createNewFile();
+		System.out.println(flag1 + " " + flag2 + " " + flag3);
 
 	}
 
