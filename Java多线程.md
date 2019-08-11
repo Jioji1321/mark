@@ -1477,7 +1477,7 @@ Daemon的作用就是为其他线程的运行提供便利服务
 
 ## 对象及变量的并发访问
 
-### synchronized同步方法
+synchronized同步方法
 
 “非线程安全”会在多个线程对同一个对象中的实例变量进行并发访问的时候发生，产生的后果就是“脏读”，去到的数据其实是被更改过的；“线程安全”就是以获取实例变量的值是经过同步处理的，不会出现脏读的现象。
 
@@ -2281,6 +2281,41 @@ service3
 
 
 
+synchronized(非this对象x)格式的写法是将x对象本身作为对象监视器，由此可以得到三条结论：
+
+1. 当多个线程同时执行synchronized(x){}同步代码块呈同步效果
+2. 当其他线程执行x对象中的synchronized同步方法呈同步效果
+3. 当其他线程执行x对象中的synchronized(this)代码块时呈同步效果
+
+但是需要注意：如果其他线程调用非synchronized方法时呈异步效果
+
+
+
+
+
+### 静态同步synchronized方法和synchronized(class)代码块
+
+关键字synchronized作用在static方法上，表示对当前*.java文件对应的Class类进行持锁
+
+
+
+synchronized加到static方法上是对Class类进行加锁，synchronized加到非static静态方法是对对象进行加锁
+
+
+
+Class锁可以对该类的所有实例对象起作用
+
+
+
+同步synchronized(class)代码块效果和synchronized static一样
+
+
+
+### 数据类型String的常量池特性
+
+String的常量池介绍
+
+https://www.cnblogs.com/niew/p/9597379.html
 
 
 
@@ -2288,6 +2323,74 @@ service3
 
 
 
+### volatile关键字
+
+volatile关键字主要作用是使变量在多个线程中可见
+
+volatile关键字是强制在公共堆栈中获取变量的值，而不是从线程私有数据栈中获取数据的值
+
+使用volatile关键字增加了实例变量在多个线程中的可见性，但是最致命的缺点是不具有原子性
+
+
+
+### synchronized和volatile比较
+
+1. 关键字volatile是线程同步的轻量级实现，所以性能会比synchronized好；volatile只能修饰变量，synchronized可以修饰方法及代码块。
+2. 多线程访问volatile不会发生阻塞，synchronized会发生阻塞
+3. volatile能保证数据的可见性，但不能保证原子性；synchronized可以保证原子性，也可以间接保证可见性，因为它将私有内存和公共内存中的数据做同步
+4. volatile是解决变量在多个线程之间的可见性，而synchronized解决的是多个线程之间访问资源的同步性
+
+
+
+线程安全包含原子性和可见性两个方面，Java同步机制都是围绕这两个方面来确保线程安全的
+
+
+
+### volatile非原子的特性
+
+volatile关键字主要使用的场合是在多个线程中可以感知实例变量被修改了，并且可以获取最新的值使用，也就是用多线程读取共享变量是可以获得最新值使用
+
+
+
+变量在内存中工作的过程
+
+1. read和load阶段：从主存复制变量到当前线程工作内存
+2. use和assign阶段：执行代码，改变共享变量值
+3. store和write阶段：从工作内存数据刷新主存对应变量的值
+
+
+
+
+
+## 线程之间的通信
+
+### 等待/通知机制的实现
+
+#### wait()
+
+方法wait()的作用是使当前执行代码的线程进行等待，wait()方法是object的方法，该方法将当前线程放入“待执行队列”并在wait()所在的代码处停止执行，直到接收到通知或者被中断为止。
+
+在调用wait()之前，必须先获得该对象的对象级别锁，即只能在同步方法或同步代码块中调用wait()方法
+
+在执行wait()方法之后，当前线程释放锁，在从wait()返回前，线程和其他线程竞争重新获得锁
+
+如果调用wait()时没有持有合适的锁,则抛出ILegalMonitorStateException,他是RuntimeException的子类,所以不需要try-catch捕获
+
+#### notify()
+
+方法notify()也要在同步方法或者同步代码块中使用，即在调用前，线程也需要获取该对象的对象级别锁
+
+如果在调用notify()方法之前没有持有合适的锁，也会抛出ILegalMonitorStateException
+
+该方法用来通知那些可能处于等待该对象对象锁的其他线程，如果有多个线程等待， 则由线程规划器随机挑选出一个呈wait状态的线程，对其发出通知notify，并使它等待获取该对象的对象锁
+
+在执行notify()方法后，当前线程不会马上释放该对象锁，呈wait状态的线程也不能马上获得该对象锁，需要等到执行notify()方法的线程将程序执行完，也就是退出synchronized代码块后，当前线程才会释放锁，而呈wait状态所在的线程才可以获取该对象锁
+
+当第一个获得了该对象锁的wait线程运行完毕之后，他才会释放对象锁，此时如果该对象没有再次使用notify()语句，则即使该对象已经空闲，其他wait状态等待的线程由于没有得到该对象的通知，还会继续阻塞在wait状态，直到这个对象发出一个notify或notifyAll()
+
+
+
+wait使线程停止运行，notify使停止的线程继续运行
 
 
 
